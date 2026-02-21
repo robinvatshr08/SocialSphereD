@@ -26,6 +26,13 @@ as separate containers.
 -   Orchestration: Docker Compose
 
 ------------------------------------------------------------------------
+## 📦 Project Structure
+.
+├── Dockerfile
+├── docker-compose.yaml
+├── package.json
+├── src/
+├── README.md
 
 
 ## ⚙️ Prerequisites
@@ -113,6 +120,45 @@ docker system prune -a
 
 ------------------------------------------------------------------------
 
+## Running Without Docker Compose (Manual Deployment)
+
+This method shows how containers communicate in real DevOps environments.
+
+1️⃣ Build application image
+docker build -t robinvats/twitter-app .
+
+2️⃣ Create Docker network
+docker network create twitter-net
+
+3️⃣ Run MongoDB container
+docker run -d \
+  --name mongo \
+  --network twitter-net \
+  -p 27017:27017 \
+  -v mongo_data:/data/db \
+  mongo:6
+
+  This creates:
+    Mongo container
+    Persistent storage volume
+    Exposed DB port
+
+4️⃣ Run backend container
+
+docker run -d \
+  --name node_app \
+  --network twitter-net \
+  -p 3003:3003 \
+  -e MONGO_URL=mongodb://mongo:27017/mydb \
+  robinvats/twitter-app
+
+Docker DNS allows backend to reach Mongo using hostname mongo.
+
+
+🌐 Access Application
+    Backend API → http://localhost:3003
+    MongoDB → mongodb://localhost:27017 
+
 ## 📦 Future Improvements
 
 -   CI/CD pipeline integration
@@ -130,3 +176,4 @@ DevOps & Cloud Enthusiast
 
 GitHub: https://github.com/robinvatshr08/SocialSphereD.git
 LinkedIn: www.linkedin.com/in/robin-vats-hr08
+
